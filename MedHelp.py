@@ -8,15 +8,29 @@ class MedManager:
     def __init__(self):
         self.root = Tk()
         self.root.geometry('300x500')
+        self.root.title('Med Help')
 
         self.windowCanvas = Canvas(self.root, bg='#292947')
         self.windowCanvas.place(relx = 0, rely = 0, relwidth = 1, relheight = 1)
 
-        self.addMedBtn = Button(self.root, text = 'Add Medication', bg = '#292947', fg = 'white', command = self.addMed)
+        self.addMedBtn = Button(self.windowCanvas, text = 'Add Medication', bg = '#292947', fg = 'white', command = self.addMed)
         self.addMedBtn.place(relx = 0, rely = 0, relwidth = 1.0, relheight = 0.1)
+
+        self.medText = Text(self.windowCanvas, bg = '#292947', fg = 'white', wrap = WORD, state = DISABLED)
+        
+        with open('Medications.json') as medFile:
+            medFile = json.loads(medFile.read())
+            for key in medFile:
+                self.medText.insert(INSERT, str(key))
+                print(key)
+
+        self.medText.place(relx = 0, rely = 0.1, relwidth = 1.0, relheight = 0.9)
+            
+        
 
     def addMed(self):
         addMedRoot = Tk()
+        addMedRoot.title('Add Med')
 
         addMedCanvas = Canvas(addMedRoot, bg = '#292947')
         addMedCanvas.place(relx = 0, rely = 0, relwidth = 1, relheight = 1)
