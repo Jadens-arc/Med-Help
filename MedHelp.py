@@ -14,19 +14,34 @@ class MedManager:
         self.windowCanvas.place(relx = 0, rely = 0, relwidth = 1, relheight = 1)
 
         self.addMedBtn = Button(self.windowCanvas, text = 'Add Medication', bg = '#292947', fg = 'white', command = self.addMed)
-        self.addMedBtn.place(relx = 0, rely = 0, relwidth = 1.0, relheight = 0.1)
+        self.addMedBtn.place(relx = 0, rely = 0, relwidth = 0.7, relheight = 0.1)
 
-        self.medText = Text(self.windowCanvas, bg = '#292947', fg = 'white', wrap = WORD, state = DISABLED)
+        self.deleteMedBtn = Button(self.windowCanvas, text = 'Delete', bg = '#292947', fg = 'white', command = self.deleteMed)
+        self.deleteMedBtn.place(relx = 0.7,rely = 0, relwidth = 0.3, relheight = 0.1)
+
+        self.medText = Text(self.windowCanvas, bg = '#292947', fg = 'white', wrap = WORD)
         
+        self.rewritePage()
+
+        self.medText.config(state = DISABLED)
+        self.medText.place(relx = 0, rely = 0.1, relwidth = 1.0, relheight = 0.9)
+        
+    def rewritePage(self):
         with open('Medications.json') as medFile:
             medFile = json.loads(medFile.read())
             for key in medFile:
-                self.medText.insert(INSERT, str(key))
-                print(key)
+                self.medText.insert(INSERT, str(key) + '\n')
+                for medKey in medFile[key]:
+                    self.medText.insert(INSERT, '    ' + str(medFile[key][medKey]) + '\n')
 
-        self.medText.place(relx = 0, rely = 0.1, relwidth = 1.0, relheight = 0.9)
-            
-        
+    def deleteMed(self):
+        deleteMedRoot = Tk()
+        deleteMedRoot.title('Delete Medication')
+
+        deleteMedCanvas = Canvas(deleteMedRoot, bg = '#292947')
+        deleteMedCanvas.place(relx = 0, rely = 0, relwidth = 1, relheight = 1)
+
+        deleteMedRoot.mainloop()
 
     def addMed(self):
         addMedRoot = Tk()
@@ -85,11 +100,16 @@ class MedManager:
             medFile[self.medNameEnt.get()] = {
                 "Amount": self.medAmountEnt.get(),
                 "Frequency": self.medFrequencyEnt.get(),
-                "Other": self.medOtherEnt.get()        
+                "Other": self.medOtherEnt.get()
             }
             
             with open('Medications.json', 'w') as medSaveFile:
                 medSaveFile.write(json.dumps(medFile))
+
+            self.medText.config(state = NORMAL)
+            self.medText.delete(1.0, END)
+            self.rewritePage()
+            self.medText.config(state = DISABLED)
             
 
     def start(self):
